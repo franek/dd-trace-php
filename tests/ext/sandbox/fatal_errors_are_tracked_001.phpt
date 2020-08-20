@@ -1,7 +1,5 @@
 --TEST--
 E_ERROR fatal errors are tracked from internal function
---SKIPIF--
-<?php if (PHP_VERSION_ID < 50500) die('skip PHP 5.4 not supported'); ?>
 --FILE--
 <?php
 register_shutdown_function(function () {
@@ -27,11 +25,11 @@ function main() {
     echo 'You should not see this.' . PHP_EOL;
 }
 
-dd_trace_function('main', function (DDTrace\SpanData $span) {
+DDTrace\trace_function('main', function (DDTrace\SpanData $span) {
     $span->name = 'main()';
 });
 
-dd_trace_function('array_sum', function (DDTrace\SpanData $span) {
+DDTrace\trace_function('array_sum', function (DDTrace\SpanData $span) {
     $span->name = 'array_sum()';
 });
 

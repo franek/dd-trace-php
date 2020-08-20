@@ -1,7 +1,6 @@
 --TEST--
 E_ERROR fatal errors are tracked from hitting the memory limit
 --SKIPIF--
-<?php if (PHP_VERSION_ID < 50500) die('skip PHP 5.4 not supported'); ?>
 <?php if (getenv('USE_ZEND_ALLOC') === '0') die('skip Zend memory manager required'); ?>
 --INI--
 memory_limit=2M
@@ -31,11 +30,11 @@ function main() {
     echo 'You should not see this.' . PHP_EOL;
 }
 
-dd_trace_function('main', function (DDTrace\SpanData $span) {
+DDTrace\trace_function('main', function (DDTrace\SpanData $span) {
     $span->name = 'main()';
 });
 
-dd_trace_function('array_sum', function (DDTrace\SpanData $span) {
+DDTrace\trace_function('array_sum', function (DDTrace\SpanData $span) {
     $span->name = 'array_sum()';
 });
 
