@@ -53,7 +53,44 @@ class IntegrationsLoader
      * @var array
      */
     public static $officiallySupportedIntegrations = [
-        WebIntegration::NAME => '\DDTrace\Integrations\Web\WebIntegration',
+        CakePHPSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\CakePHP\CakePHPSandboxedIntegration',
+        CodeIgniterSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\CodeIgniter\V2\CodeIgniterSandboxedIntegration',
+        CurlSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Curl\CurlSandboxedIntegration',
+        EloquentSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Eloquent\EloquentSandboxedIntegration',
+        GuzzleSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Guzzle\GuzzleSandboxedIntegration',
+        LaravelSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Laravel\LaravelSandboxedIntegration',
+        LumenSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Lumen\LumenSandboxedIntegration',
+        MemcachedSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Memcached\MemcachedSandboxedIntegration',
+        MongoSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Mongo\MongoSandboxedIntegration',
+        MysqliSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Mysqli\MysqliSandboxedIntegration',
+        PDOSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\PDO\PDOSandboxedIntegration',
+        PHPRedisSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\PHPRedis\PHPRedisSandboxedIntegration',
+        PredisSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Predis\PredisSandboxedIntegration',
+        SlimSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Slim\SlimSandboxedIntegration',
+        SymfonySandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Symfony\SymfonySandboxedIntegration',
+        WebIntegration::NAME =>
+            '\DDTrace\Integrations\Web\WebIntegration',
+        WordPressSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\WordPress\WordPressSandboxedIntegration',
+        YiiSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\Yii\YiiSandboxedIntegration',
+        ZendFrameworkSandboxedIntegration::NAME =>
+            '\DDTrace\Integrations\ZendFramework\ZendFrameworkSandboxedIntegration',
     ];
 
     /**
@@ -67,53 +104,13 @@ class IntegrationsLoader
     public function __construct(array $integrations)
     {
         $this->integrations = $integrations;
-        // Sandboxed integrations get loaded with a feature flag
-        if (\ddtrace_config_sandbox_enabled()) {
-            $this->integrations[CakePHPSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\CakePHP\CakePHPSandboxedIntegration';
-            $this->integrations[CodeIgniterSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\CodeIgniter\V2\CodeIgniterSandboxedIntegration';
-            $this->integrations[CurlSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Curl\CurlSandboxedIntegration';
+        if (\PHP_MAJOR_VERSION < 7) {
+            // PHP 7+ only
+            unset($this->integrations[PHPRedisSandboxedIntegration::NAME]);
+
+            // PHP 7.0+ use C level deferred integration loader, PHP 5 doesn't
             $this->integrations[ElasticSearchSandboxedIntegration::NAME] =
                 '\DDTrace\Integrations\ElasticSearch\V1\ElasticSearchSandboxedIntegration';
-            $this->integrations[EloquentSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Eloquent\EloquentSandboxedIntegration';
-            $this->integrations[GuzzleSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Guzzle\GuzzleSandboxedIntegration';
-            $this->integrations[LaravelSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Laravel\LaravelSandboxedIntegration';
-            $this->integrations[LumenSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Lumen\LumenSandboxedIntegration';
-            $this->integrations[MemcachedSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Memcached\MemcachedSandboxedIntegration';
-            $this->integrations[MongoSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Mongo\MongoSandboxedIntegration';
-            $this->integrations[MysqliSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Mysqli\MysqliSandboxedIntegration';
-            $this->integrations[PDOSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\PDO\PDOSandboxedIntegration';
-            if (\PHP_MAJOR_VERSION >= 7) {
-                $this->integrations[PHPRedisSandboxedIntegration::NAME] =
-                    '\DDTrace\Integrations\PHPRedis\PHPRedisSandboxedIntegration';
-            }
-            $this->integrations[PredisSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Predis\PredisSandboxedIntegration';
-            $this->integrations[SlimSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Slim\SlimSandboxedIntegration';
-            $this->integrations[SymfonySandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Symfony\SymfonySandboxedIntegration';
-            $this->integrations[WordPressSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\WordPress\WordPressSandboxedIntegration';
-            $this->integrations[YiiSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\Yii\YiiSandboxedIntegration';
-            $this->integrations[ZendFrameworkSandboxedIntegration::NAME] =
-                '\DDTrace\Integrations\ZendFramework\ZendFrameworkSandboxedIntegration';
-        }
-
-        // For PHP 7.0+ use C level deferred integration loader
-        if (\PHP_MAJOR_VERSION >= 7) {
-            unset($this->integrations[ElasticSearchSandboxedIntegration::NAME]);
         }
     }
 
